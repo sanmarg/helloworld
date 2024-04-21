@@ -35,6 +35,7 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > ssh_private_key
         chmod 600 ssh_private_key
+        touch ~/.ssh/known_hosts
         ssh-keyscan -H 52.172.221.49 >> ~/.ssh/known_hosts
         ssh -i ssh_private_key azureuser@52.172.221.49 "cd /home/azureuser/helloworld/ && git pull origin main && pip install -r requirements.txt && python3 task1.py"
 
