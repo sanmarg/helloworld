@@ -1,5 +1,5 @@
 import pytest
-from task1 import app
+from .task1 import app
 @pytest.fixture
 def client():
     with app.test_client() as client:
