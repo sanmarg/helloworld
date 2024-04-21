@@ -9,6 +9,3 @@ def test_hello_world(client):
     response = client.get('/')
     assert response.data == b'Hello, World!'
 
-def test_hello_world_failure(client):
-    response = client.get('/')
-    assert response.data != b'Hello, Mars!'
