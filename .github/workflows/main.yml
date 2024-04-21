@@ -33,13 +33,10 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
       run: |
-        # Create a temporary file to store the private key
         echo "$SSH_PRIVATE_KEY" > ssh_private_key
         chmod 600 ssh_private_key
-
-        # SSH command to deploy to Azure VM
+        ssh-keyscan -H 52.172.221.49 >> ~/.ssh/known_hosts
         ssh -i ssh_private_key azureuser@52.172.221.49 "cd /home/azureuser/helloworld/ && git pull origin main && pip install -r requirements.txt && python3 task1.py"
 
-        # Remove the temporary file
         rm ssh_private_key
 
