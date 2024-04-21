@@ -38,7 +38,7 @@ jobs:
         mkdir -p ~/.ssh
         touch ~/.ssh/known_hosts
         ssh-keyscan -H 52.172.221.49 >> ~/.ssh/known_hosts
-        ssh -i ssh_private_key azureuser@52.172.221.49 "cd /home/azureuser/helloworld/ && git pull origin main && pip install -r requirements.txt && pip install --upgrade Flask Werkzeug && python3 task1.py"
+        ssh -i ssh_private_key azureuser@52.172.221.49 "cd /home/azureuser/helloworld/ && git pull origin main && pip install -r requirements.txt && pip install --upgrade Flask Werkzeug && python3 task1.py > /dev/null 2>&1 &"
 
-        rm ssh_private_key
+        rm -f ssh_private_key
 
