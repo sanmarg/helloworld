@@ -1,32 +1,16 @@
-name: Auto Comment
-on:
-  issues:
-    types:
-      - opened
-      - assigned
+name: Greetings
+
+on: [pull_request_target, issues]
 
 jobs:
-  run:
+  greeting:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
-      - name: Auto Comment on Issues Opened
-        if: github.event_name == 'issues' && github.event.action == 'opened'
-        run: |
-          MESSAGE="👋 @$GITHUB_ACTOR\n\nThank you for raising an issue. We will investigate into the matter and get back to you as soon as possible.\n\nPlease make sure you have given us as much context as possible."
-          ISSUE_NUMBER=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d "{\"body\":\"$MESSAGE\"}" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUMBER}/comments"
-
-      - name: Auto Comment on Issues Assigned
-        if: github.event_name == 'issues' && github.event.action == 'assigned'
-        run: |
-          MESSAGE="Hello @$GITHUB_ACTOR, thank you for raising an issue. 🙌 I have assigned the issue to you. You can now start working on it. If you encounter any problems, please feel free to connect with us. 👍"
-          ISSUE_NUMBER=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d "{\"body\":\"$MESSAGE\"}" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUMBER}/comments"
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        mode: "always"
+        issue-message: "Thank you for raising an issue. Hope you're enjoying open source. We'll try to reply or assign as soon as possible. Feel free to connect with a mentor."
