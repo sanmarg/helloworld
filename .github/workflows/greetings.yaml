@@ -1,4 +1,4 @@
-name: Auto Comment
+name: Greetings
 on:
  issues:
   types:
