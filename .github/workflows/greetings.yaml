@@ -4,55 +4,29 @@ on:
     types:
       - opened
       - assigned
-  pull_request:
-    types:
-      - opened
-      - closed
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - name: Auto Comment on Issues Opened
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const user = context.payload.issue ? context.payload.issue.user : null;
-            if (user) {
-              console.log('👋 @' + user.login);
-              console.log('Thank you for raising an issue. We will investigate into the matter and get back to you as soon as possible.');
-              console.log('Please make sure you have given us as much context as possible.');
-            }
-
-      - name: Auto Comment on Pull Request Merged
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const user = context.payload.pull_request ? context.payload.pull_request.user : null;
-            if (user) {
-              console.log('👋 @' + user.login + ' 🎉 Congrats on your merged pull request! Thanks for the valuable contribution! 👏🎉');
-            }
-
-      - name: Auto Comment on Pull Request Opened
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const user = context.payload.pull_request ? context.payload.pull_request.user : null;
-            if (user) {
-              console.log('Hello👋 @' + user.login + ', I hope you are doing well!');
-              console.log('Thank you for raising your pull request and contributing to our Community 🎉');
-              console.log('Please make sure you have followed our contributing guidelines. We will review it as soon as possible.');
-            }
+        if: github.event_name == 'issues' && github.event.action == 'opened'
+        run: |
+          MESSAGE="👋 @$GITHUB_ACTOR\n\nThank you for raising an issue. We will investigate into the matter and get back to you as soon as possible.\n\nPlease make sure you have given us as much context as possible."
+          ISSUE_NUMBER=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"body\":\"$MESSAGE\"}" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUMBER}/comments"
 
       - name: Auto Comment on Issues Assigned
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const user = context.payload.issue ? context.payload.issue.user : null;
-            if (user) {
-              console.log('Hello @' + user.login + ', thank you for raising an issue. 🙌 I have assigned the issue to you. You can now start working on it. If you encounter any problems, please feel free to connect with us. 👍');
-            }
+        if: github.event_name == 'issues' && github.event.action == 'assigned'
+        run: |
+          MESSAGE="Hello @$GITHUB_ACTOR, thank you for raising an issue. 🙌 I have assigned the issue to you. You can now start working on it. If you encounter any problems, please feel free to connect with us. 👍"
+          ISSUE_NUMBER=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"body\":\"$MESSAGE\"}" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUMBER}/comments"
