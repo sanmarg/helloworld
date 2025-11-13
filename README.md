@@ -8,7 +8,7 @@ The Flask application (`task1.py`) is a simple web application that responds wit
 
 ## Setup and Installation
 
-To run the Flask application locally, you can follow these steps for the aplication to run:
+To run the Flask application locally, you can follow these steps:
 
 1. Clone the repository:
 
